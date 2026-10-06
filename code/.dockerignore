@@ -1,0 +1,10 @@
+# Jangan kirim data besar / hasil generasi ke dalam image.
+data/
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+pytest-cache-files-*/
+*.egg-info/
+augmented dataset/
+Dataset/

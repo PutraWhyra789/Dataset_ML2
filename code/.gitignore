@@ -1,0 +1,12 @@
+# Virtual environment lokal (dibuat oleh uv)
+.venv/
+
+# Artefak Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+pytest-cache-files-*/
+*.egg-info/
+
+# Hasil uji cepat saat pengembangan
+/tmp/

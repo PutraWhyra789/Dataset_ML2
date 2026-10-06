@@ -1,0 +1,3 @@
+# Dokumentasi dataset (DATASET_CARD.md) wajib ikut dibagikan, sedangkan pola
+# `*.md` pada .gitignore root repo mengabaikannya. Aturan ini mengembalikannya.
+!*.md

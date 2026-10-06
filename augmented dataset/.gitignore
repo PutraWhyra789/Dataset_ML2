@@ -1,0 +1,4 @@
+# Folder ini berisi citra hasil augmentasi + dokumentasinya.
+# Pola `*.md` pada .gitignore di root repo akan mengabaikan dokumentasi ini,
+# padahal README.md dan DATASET_CARD.md wajib ikut dibagikan.
+!*.md

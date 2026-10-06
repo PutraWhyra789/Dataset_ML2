@@ -1,0 +1,59 @@
+{
+  "generator": "digit-augmentation",
+  "generator_version": "1.0.0",
+  "generated_at_utc": "2026-10-06T03:25:54+00:00",
+  "seed": 42,
+  "per_class_target": 50,
+  "total_images": 500,
+  "per_class_counts": {
+    "0": 50,
+    "1": 50,
+    "2": 50,
+    "3": 50,
+    "4": 50,
+    "5": 50,
+    "6": 50,
+    "7": 50,
+    "8": 50,
+    "9": 50
+  },
+  "canonical_size": 128,
+  "output_mode": "L (grayscale)",
+  "jpeg_quality": 95,
+  "source_dir": "Labeled",
+  "output_dir": "augmented dataset",
+  "source_image_count": 100,
+  "source_fingerprint_sha256": "f15ab101c168fabda7533b8f9c9e6fad430bc12af9c606e9149cbad9f877e56b",
+  "policy": {
+    "max_rotation_deg": 10.0,
+    "max_translate": 0.08,
+    "min_scale": 0.92,
+    "max_scale": 1.08,
+    "max_shear_deg": 5.0,
+    "brightness_delta": 0.1,
+    "contrast_delta": 0.12,
+    "blur_prob": 0.3,
+    "blur_sigma_max": 0.9,
+    "noise_prob": 0.3,
+    "noise_sigma_max": 6.0,
+    "jpeg_prob": 0.35,
+    "jpeg_quality_min": 72,
+    "jpeg_quality_max": 96,
+    "elastic_prob": 0.25,
+    "elastic_alpha": 0.75,
+    "elastic_sigma": 6.0,
+    "gradient_prob": 0.2,
+    "gradient_strength": 0.08
+  },
+  "forbidden_transforms": [
+    "horizontal_flip",
+    "vertical_flip",
+    "rotation_larger_than_15_deg",
+    "aggressive_crop_or_warp",
+    "color_inversion"
+  ],
+  "environment": {
+    "python": "3.12.12",
+    "platform": "Windows-11-10.0.26100-SP0"
+  }
+}

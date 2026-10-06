@@ -1,0 +1,80 @@
+# Reproduksi UAS Machine Learning - Augmentasi Dataset Digit Tulisan Tangan
+#
+# Lokasi berkas ini: Dataset/code/compose.yaml
+#
+# uv tidak perlu dipasang di komputer Anda. Compose memakai image resmi uv di
+# dalam container sehingga cukup Docker saja.
+#
+# Pemakaian (jalankan dari folder Dataset/code):
+#   docker compose build                       # bangun image (sekali)
+#   docker compose run --rm augmentasi         # bangkitkan 500 citra (50/kelas)
+#   docker compose run --rm augmentasi --per-class 100 --seed 42
+#   docker compose run --rm verifikasi         # cek distribusi & integritas hasil
+#   docker compose run --rm test               # jalankan unit test
+#   docker compose run --rm shell              # shell interaktif uv
+#
+# Lokasi berkas di host (default, relatif terhadap folder ini = Dataset/code):
+#   ../Labeled            -> sumber citra asli (read-only, aman)
+#   ../augmented dataset  -> hasil, muncul langsung di laptop Anda
+#
+# Bila struktur folder Anda berbeda, salin .env.example menjadi .env lalu ubah
+# DATASET_SOURCE / DATASET_OUTPUT tanpa menyentuh berkas ini.
+
+name: uas-ml-augmentasi
+
+x-common: &common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  working_dir: /app
+  volumes:
+    # Dataset asli: baca saja, tidak akan pernah diubah oleh container.
+    # Titik mount /data sengaja dibuat setara dengan root folder dataset,
+    # sehingga metadata (mis. `source_dir`) sama baik dijalankan di host
+    # maupun di dalam container.
+    - ${DATASET_SOURCE:-../Labeled}:/data/Labeled:ro
+    # Hasil augmentasi: persist ke folder host agar langsung bisa diperiksa.
+    - "${DATASET_OUTPUT:-../augmented dataset}:/data/augmented dataset"
+
+# Catatan: setiap service memakai tag image BERBEDA. Docker tidak dapat
+# membangun beberapa gambar dengan tag sama dalam satu perintah `build`,
+# sehingga tag per-service diperlukan agar `docker compose build` berhasil.
+
+services:
+  # Bangkitkan dataset augmentasi (default: 50 citra/kelas, seed 42).
+  augmentasi:
+    <<: *common
+    image: uas-ml-digit-augmentation:1.0.0
+    entrypoint: ["uv", "run", "--frozen", "python", "-m", "digit_aug.generate"]
+    command:
+      - "--source"
+      - "/data/Labeled"
+      - "--output"
+      - "/data/augmented dataset"
+      - "--per-class"
+      - "50"
+      - "--seed"
+      - "42"
+
+  # Verifikasi hasil: distribusi kelas, integritas berkas, dan duplikat.
+  verifikasi:
+    <<: *common
+    image: uas-ml-digit-augmentation-verifikasi:1.0.0
+    entrypoint: ["uv", "run", "--frozen", "python", "-m", "digit_aug.verify"]
+    command: ["--dataset", "/data/augmented dataset"]
+
+  # Unit test pipeline augmentasi.
+  test:
+    <<: *common
+    image: uas-ml-digit-augmentation-test:1.0.0
+    entrypoint: ["uv", "run", "--frozen", "pytest"]
+    command: ["-q", "-p", "no:cacheprovider"]
+
+  # Shell interaktif (uv sudah tersedia di dalam container).
+  shell:
+    <<: *common
+    image: uas-ml-digit-augmentation-shell:1.0.0
+    entrypoint: ["bash"]
+    command: ["-lc", "uv run --frozen python -c 'import digit_aug; print(digit_aug.__version__)' && bash"]
+    stdin_open: true
+    tty: true
